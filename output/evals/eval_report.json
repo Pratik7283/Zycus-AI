@@ -1,0 +1,302 @@
+{
+  "generated_at": "2026-08-08T09:32:12.752481+00:00",
+  "reference_date": "2026-08-08T00:00:00+00:00",
+  "summary": {
+    "total_cases": 10,
+    "passed_cases": 10,
+    "average_score": 1.0
+  },
+  "tasks": [
+    {
+      "task_name": "Task 1",
+      "total_cases": 5,
+      "passed_cases": 5,
+      "average_score": 1.0,
+      "adversarial_cases_passed": 1
+    },
+    {
+      "task_name": "Task 2",
+      "total_cases": 5,
+      "passed_cases": 5,
+      "average_score": 1.0,
+      "adversarial_cases_passed": 1
+    }
+  ],
+  "cases": [
+    {
+      "task_name": "Task 1",
+      "case_name": "report_export_bug",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "product_area == 'Reports'",
+          "passed": true
+        },
+        {
+          "label": "issue_category == 'Bug'",
+          "passed": true
+        },
+        {
+          "label": "urgency_tier == 'P2'",
+          "passed": true
+        },
+        {
+          "label": "recommended_team == 'Analytics and Reporting Support'",
+          "passed": true
+        }
+      ],
+      "input": {
+        "subject": "Cannot export report",
+        "body": "Export fails with 500 after clicking CSV. This blocks the quarterly review."
+      }
+    },
+    {
+      "task_name": "Task 1",
+      "case_name": "auth_access_issue",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "product_area == 'Authentication'",
+          "passed": true
+        },
+        {
+          "label": "recommended_team == 'Identity and Access'",
+          "passed": true
+        },
+        {
+          "label": "urgency_tier in ['P2', 'P3', 'P4']",
+          "passed": true
+        }
+      ],
+      "input": "I cannot log in after MFA reset. Access denied even though the password is correct."
+    },
+    {
+      "task_name": "Task 1",
+      "case_name": "platform_outage",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "product_area == 'Pipeline Monitoring'",
+          "passed": true
+        },
+        {
+          "label": "urgency_tier == 'P1'",
+          "passed": true
+        },
+        {
+          "label": "recommended_team == 'Product Engineering'",
+          "passed": true
+        }
+      ],
+      "input": "DataBridge Pro is down for all users after a deployment."
+    },
+    {
+      "task_name": "Task 1",
+      "case_name": "bulk_ingestion_request",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "product_area == 'Data Ingestion'",
+          "passed": true
+        },
+        {
+          "label": "issue_category == 'Bug'",
+          "passed": true
+        },
+        {
+          "label": "recommended_team == 'Data Platform Support'",
+          "passed": true
+        },
+        {
+          "label": "urgency_tier == 'P2'",
+          "passed": true
+        }
+      ],
+      "input": {
+        "subject": "Request: bulk archive entries in DataBridge Pro Data Ingestion",
+        "body": "Currently DataBridge Pro only allows individual archive entries in the Data Ingestion module. We urgently need bulk operations."
+      }
+    },
+    {
+      "task_name": "Task 1",
+      "case_name": "ambiguous_dashboard_question",
+      "adversarial": true,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "product_area == 'Dashboard'",
+          "passed": true
+        },
+        {
+          "label": "issue_category == 'How-To'",
+          "passed": true
+        },
+        {
+          "label": "urgency_tier == 'P4'",
+          "passed": true
+        },
+        {
+          "label": "known_issue_match == False",
+          "passed": true
+        }
+      ],
+      "input": {
+        "subject": "Question",
+        "body": "Can you help me understand the dashboard?"
+      }
+    },
+    {
+      "task_name": "Task 2",
+      "case_name": "at_risk_account",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "company == 'Omni Consumer Products'",
+          "passed": true
+        },
+        {
+          "label": "health_status == 'At Risk'",
+          "passed": true
+        },
+        {
+          "label": "executive_summary contains 'renewal'",
+          "passed": true
+        },
+        {
+          "label": "len(flagged_tickets) >= 1",
+          "passed": true
+        },
+        {
+          "label": "open_risks_and_flagged_issues contains item with 'Account health is marked At Risk.'",
+          "passed": true
+        }
+      ],
+      "input": {
+        "account_id": "ACC-3336"
+      }
+    },
+    {
+      "task_name": "Task 2",
+      "case_name": "healthy_account",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "company == 'Polaris Group'",
+          "passed": true
+        },
+        {
+          "label": "health_status == 'Healthy'",
+          "passed": true
+        },
+        {
+          "label": "len(recommended_talking_points) >= 3",
+          "passed": true
+        },
+        {
+          "label": "data_window_days == 90",
+          "passed": true
+        }
+      ],
+      "input": {
+        "account_id": "ACC-3033"
+      }
+    },
+    {
+      "task_name": "Task 2",
+      "case_name": "new_account",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "company == 'Solaris Data'",
+          "passed": true
+        },
+        {
+          "label": "health_status == 'New'",
+          "passed": true
+        },
+        {
+          "label": "usage_trend == 'Increasing'",
+          "passed": true
+        },
+        {
+          "label": "executive_summary contains 'Solaris Data'",
+          "passed": true
+        }
+      ],
+      "input": {
+        "account_id": "ACC-7893"
+      }
+    },
+    {
+      "task_name": "Task 2",
+      "case_name": "declining_account",
+      "adversarial": false,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "company == 'Vertex Solutions'",
+          "passed": true
+        },
+        {
+          "label": "health_status == 'At Risk'",
+          "passed": true
+        },
+        {
+          "label": "usage_trend == 'Declining'",
+          "passed": true
+        },
+        {
+          "label": "open_risks_and_flagged_issues contains 'P1 tickets'",
+          "passed": true
+        }
+      ],
+      "input": {
+        "account_id": "ACC-8113"
+      }
+    },
+    {
+      "task_name": "Task 2",
+      "case_name": "sparse_account",
+      "adversarial": true,
+      "passed": true,
+      "score": 1.0,
+      "checks": [
+        {
+          "label": "company == 'Oscorp Solutions'",
+          "passed": true
+        },
+        {
+          "label": "health_status == 'Healthy'",
+          "passed": true
+        },
+        {
+          "label": "len(open_risks_and_flagged_issues) >= 1",
+          "passed": true
+        },
+        {
+          "label": "len(recommended_talking_points) >= 3",
+          "passed": true
+        }
+      ],
+      "input": {
+        "account_id": "ACC-1664"
+      }
+    }
+  ]
+}
