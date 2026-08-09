@@ -30,4 +30,3 @@ class AccountBriefResponse(BaseModel):
     flagged_tickets: list[FlaggedTicket]
     data_window_days: int
     raw_account: dict[str, Any]
-
