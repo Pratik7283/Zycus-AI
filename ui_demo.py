@@ -6,7 +6,6 @@ A user-friendly interface for non-technical TAMs to use Task 1 and Task 2 functi
 import streamlit as st
 from pathlib import Path
 import sys
-import json
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -16,86 +15,82 @@ from task2.service import generate_account_brief
 
 # Page configuration
 st.set_page_config(
-    page_title="Zycus AI Support Assistant",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="Zycus AI Assistant",
+    page_icon="⚡",
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for better styling
+# Custom CSS for modern, clean styling
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #1f77b4;
-        margin-bottom: 1rem;
+    .stApp {
+        background-color: #f8f9fa;
     }
-    .sub-header {
+    .main-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    .card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin: 1rem 0;
+    }
+    .metric-label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 500;
+    }
+    .metric-value {
         font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    div[data-testid="stForm"] {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 8px;
+        height: 3rem;
         font-weight: 600;
-        color: #2c3e50;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    .info-box {
-        background-color: #e8f4f8;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
-        margin: 1rem 0;
-    }
-    .success-box {
-        background-color: #d4edda;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #28a745;
-        margin: 1rem 0;
-    }
-    .warning-box {
-        background-color: #fff3cd;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #ffc107;
-        margin: 1rem 0;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Main header
-st.markdown('<div class="main-header">🤖 Zycus AI Support Assistant</div>', unsafe_allow_html=True)
+# Simple header
+st.markdown('<div class="main-title">⚡ Zycus AI Assistant</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Support automation for Technical Account Managers</div>', unsafe_allow_html=True)
 
-st.markdown("""
-This tool helps Technical Account Managers (TAMs) with two key tasks:
-- **Ticket Triage**: Automatically classify and prioritize support tickets
-- **Account Briefs**: Generate comprehensive account health summaries for QBR meetings
-""")
-
-# Sidebar for navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Select Tool", ["Ticket Triage", "Account Brief", "About"])
+# Simple tab navigation
+tab1, tab2, tab3 = st.tabs(["🎫 Ticket Triage", "📊 Account Brief", "ℹ️ About"])
 
 # Ticket Triage Page
-if page == "Ticket Triage":
+with tab1:
     st.markdown('<div class="sub-header">📋 Ticket Triage</div>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="info-box">
-    <strong>What this does:</strong> Automatically classifies support tickets by product area, 
-    issue category, and urgency. It also matches tickets to knowledge base articles and suggests 
-    appropriate response teams.
-    </div>
-    """, unsafe_allow_html=True)
     
     # Input form
     with st.form("ticket_form"):
+        subject = st.text_input("Ticket Subject", placeholder="e.g., Cannot export report")
+        body = st.text_area("Ticket Body", placeholder="Describe the issue in detail...", height=100)
+        
         col1, col2 = st.columns(2)
         with col1:
-            subject = st.text_input("Ticket Subject", placeholder="e.g., Cannot export report")
+            submit_button = st.form_submit_button("Analyze Ticket", type="primary")
         with col2:
-            body = st.text_area("Ticket Body", placeholder="Describe the issue in detail...", height=150)
-        
-        submit_button = st.form_submit_button("Analyze Ticket", type="primary")
+            clear_button = st.form_submit_button("Clear")
     
     if submit_button:
         if not subject and not body:
@@ -103,57 +98,57 @@ if page == "Ticket Triage":
         else:
             with st.spinner("Analyzing ticket..."):
                 try:
-                    # Call triage service
                     result = triage_ticket({"subject": subject, "body": body})
                     
-                    # Display results
-                    st.markdown('<div class="success-box"><strong>✅ Analysis Complete</strong></div>', unsafe_allow_html=True)
+                    # Results container
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
                     
-                    # Classification results
+                    # Classification results with contrast colors
                     col1, col2, col3 = st.columns(3)
                     with col1:
-                        st.metric("Product Area", result.product_area)
+                        st.markdown(f'<div class="metric-label">Product Area</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="metric-value" style="color: #2563eb;">{result.product_area}</div>', unsafe_allow_html=True)
                     with col2:
-                        st.metric("Issue Category", result.issue_category)
+                        st.markdown(f'<div class="metric-label">Issue Category</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="metric-value" style="color: #7c3aed;">{result.issue_category}</div>', unsafe_allow_html=True)
                     with col3:
-                        st.metric("Urgency Tier", result.urgency_tier)
+                        st.markdown(f'<div class="metric-label">Urgency Tier</div>', unsafe_allow_html=True)
+                        urgency_color = "#dc2626" if result.urgency_tier == "P1" else "#f59e0b" if result.urgency_tier == "P2" else "#059669"
+                        st.markdown(f'<div class="metric-value" style="color: {urgency_color};">{result.urgency_tier}</div>', unsafe_allow_html=True)
                     
-                    # Recommended team
-                    st.info(f"🎯 **Recommended Team:** {result.recommended_team}")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    # Recommended team with high contrast
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown(f'<div class="metric-label">Recommended Team</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="metric-value" style="color: #0891b2;">🎯 {result.recommended_team}</div>', unsafe_allow_html=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     
                     # Knowledge base match
                     if result.known_issue_match:
-                        st.success(f"📚 **Knowledge Base Match:** {result.matched_kb_doc}")
-                        with st.expander("View Matched Article Excerpt"):
+                        st.markdown('<div class="card" style="border-left: 4px solid #10b981;">', unsafe_allow_html=True)
+                        st.markdown(f'**📚 Knowledge Base Match:** {result.matched_kb_doc}')
+                        with st.expander("View Article Excerpt"):
                             st.write(result.matched_kb_excerpt)
+                        st.markdown('</div>', unsafe_allow_html=True)
                     else:
-                        st.warning("⚠️ No strong knowledge base match found")
+                        st.info("⚠️ No knowledge base match found")
                     
                     # Draft response
-                    st.subheader("📝 Suggested Response")
+                    st.markdown('<div class="card">', unsafe_allow_html=True)
+                    st.markdown('**📝 Suggested Response**')
                     st.write(result.draft_first_response)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # Reasoning
-                    with st.expander("View Analysis Reasoning"):
-                        for reason in result.reasoning:
-                            st.write(f"• {reason}")
-                    
-                    # Confidence
-                    st.caption(f"Confidence Score: {result.confidence:.0%}")
+                    # Confidence score
+                    st.caption(f'Confidence: {result.confidence:.0%}')
                     
                 except Exception as e:
-                    st.error(f"Error analyzing ticket: {str(e)}")
+                    st.error(f"Error: {str(e)}")
 
 # Account Brief Page
-elif page == "Account Brief":
-    st.markdown('<div class="sub-header">📊 Account Brief Generator</div>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="info-box">
-    <strong>What this does:</strong> Generates comprehensive account health summaries for QBR meetings, 
-    including executive summaries, risk analysis, and talking points based on recent ticket activity.
-    </div>
-    """, unsafe_allow_html=True)
+with tab2:
+    st.markdown('<div class="sub-header">📊 Account Brief</div>', unsafe_allow_html=True)
     
     # Load available accounts
     try:
@@ -173,111 +168,109 @@ elif page == "Account Brief":
             index=0 if account_options else None
         )
         
-        submit_button = st.form_submit_button("Generate Account Brief", type="primary")
+        col1, col2 = st.columns(2)
+        with col1:
+            submit_button = st.form_submit_button("Generate Brief", type="primary")
+        with col2:
+            clear_button = st.form_submit_button("Clear")
     
     if submit_button:
         with st.spinner("Generating account brief..."):
             try:
-                # Call account brief service
                 result = generate_account_brief({"account_id": selected_account})
                 
-                # Display results
-                st.markdown('<div class="success-box"><strong>✅ Account Brief Generated</strong></div>', unsafe_allow_html=True)
-                
-                # Account overview
+                # Account overview with contrast colors
+                st.markdown('<div class="card">', unsafe_allow_html=True)
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
-                    st.metric("Company", result.company)
+                    st.markdown(f'<div class="metric-label">Company</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="metric-value" style="color: #1e40af;">{result.company}</div>', unsafe_allow_html=True)
                 with col2:
-                    st.metric("TAM", result.tam)
+                    st.markdown(f'<div class="metric-label">TAM</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="metric-value" style="color: #7c3aed;">{result.tam}</div>', unsafe_allow_html=True)
                 with col3:
-                    st.metric("Health Status", result.health_status)
+                    st.markdown(f'<div class="metric-label">Health Status</div>', unsafe_allow_html=True)
+                    health_color = "#dc2626" if result.health_status == "At Risk" else "#059669" if result.health_status == "Healthy" else "#f59e0b"
+                    st.markdown(f'<div class="metric-value" style="color: {health_color};">{result.health_status}</div>', unsafe_allow_html=True)
                 with col4:
-                    st.metric("Usage Trend", result.usage_trend)
+                    st.markdown(f'<div class="metric-label">Usage Trend</div>', unsafe_allow_html=True)
+                    trend_color = "#059669" if result.usage_trend == "Increasing" else "#dc2626" if result.usage_trend == "Declining" else "#6b7280"
+                    st.markdown(f'<div class="metric-value" style="color: {trend_color};">{result.usage_trend}</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
                 
                 # Executive summary
-                st.subheader("📋 Executive Summary")
+                st.markdown('<div class="card">', unsafe_allow_html=True)
+                st.markdown('**📋 Executive Summary**')
                 st.write(result.executive_summary)
+                st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Open risks and flagged issues
-                st.subheader("⚠️ Open Risks & Flagged Issues")
+                # Open risks with contrast
                 if result.open_risks_and_flagged_issues:
+                    st.markdown('<div class="card" style="border-left: 4px solid #f59e0b;">', unsafe_allow_html=True)
+                    st.markdown('**⚠️ Open Risks & Flagged Issues**')
                     for i, risk in enumerate(result.open_risks_and_flagged_issues, 1):
                         st.write(f"{i}. {risk}")
+                    st.markdown('</div>', unsafe_allow_html=True)
                 else:
-                    st.info("No major risks identified")
+                    st.success("✅ No major risks identified")
                 
-                # Talking points
-                st.subheader("💬 Recommended Talking Points for QBR")
+                # Talking points with contrast
                 if result.recommended_talking_points:
+                    st.markdown('<div class="card" style="border-left: 4px solid #3b82f6;">', unsafe_allow_html=True)
+                    st.markdown('**💬 QBR Talking Points**')
                     for i, point in enumerate(result.recommended_talking_points, 1):
                         st.write(f"{i}. {point}")
+                    st.markdown('</div>', unsafe_allow_html=True)
                 else:
-                    st.warning("No talking points generated")
+                    st.warning("⚠️ No talking points generated")
                 
                 # Flagged tickets
                 if result.flagged_tickets:
-                    st.subheader("🚩 Flagged Tickets")
+                    st.markdown('<div class="card" style="border-left: 4px solid #ef4444;">', unsafe_allow_html=True)
+                    st.markdown('**🚩 Flagged Tickets**')
                     for ticket in result.flagged_tickets:
                         with st.expander(f"Ticket: {ticket.ticket_id} ({ticket.urgency})"):
                             st.write(f"**Status:** {ticket.status}")
                             st.write(f"**Created:** {ticket.created_at}")
                             st.write(f"**Reason:** {ticket.reason}")
                             st.write(f"**Quote:** {ticket.quote}")
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Data window
-                st.caption(f"Data based on last {result.data_window_days} days of activity")
+                st.caption(f'Data based on last {result.data_window_days} days')
                 
             except Exception as e:
-                st.error(f"Error generating account brief: {str(e)}")
+                st.error(f"Error: {str(e)}")
 
 # About Page
-elif page == "About":
-    st.markdown('<div class="sub-header">ℹ️ About This Tool</div>', unsafe_allow_html=True)
+with tab3:
+    st.markdown('<div class="sub-header">ℹ️ About</div>', unsafe_allow_html=True)
     
-    st.markdown("""
-    ## Overview
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('**🎯 Overview**')
+    st.write('AI-powered support automation for Technical Account Managers')
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    This is a demonstration UI for the Zycus AI Project, which implements intelligent support automation using:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('**🚀 Features**')
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown('**Ticket Triage**')
+        st.write('• Auto-classify tickets')
+        st.write('• Match knowledge base')
+        st.write('• Assign teams')
+        st.write('• Draft responses')
+    with col2:
+        st.markdown('**Account Briefs**')
+        st.write('• Health analysis')
+        st.write('• Risk detection')
+        st.write('• QBR talking points')
+        st.write('• Executive summaries')
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    - **LLM Classification**: Using Groq's Llama 3.1 model for intelligent text analysis
-    - **RAG Pipeline**: Semantic search with sentence-transformers for knowledge base matching
-    - **Prompt Chaining**: Multi-step LLM workflows for complex reasoning tasks
-    
-    ## Features
-    
-    ### Ticket Triage (Task 1)
-    - Automatic classification of support tickets
-    - Product area, issue category, and urgency detection
-    - Knowledge base article matching
-    - Team assignment recommendations
-    - Draft response generation
-    
-    ### Account Briefs (Task 2)
-    - Account health analysis
-    - Risk detection from ticket patterns
-    - Executive summary generation
-    - QBR talking point suggestions
-    - Flagged ticket identification
-    
-    ## Technical Details
-    
-    - **Backend**: FastAPI with Pydantic for data validation
-    - **AI Models**: sentence-transformers (all-MiniLM-L6-v2) for embeddings
-    - **LLM**: Groq API with Llama 3.1 8B Instant
-    - **Frontend**: Streamlit for user-friendly interface
-    
-    ## Usage Tips
-    
-    1. **Ticket Triage**: Provide clear, detailed ticket descriptions for better classification
-    2. **Account Briefs**: Select accounts from the dropdown to see comprehensive analysis
-    3. **Results**: Review the reasoning and confidence scores to understand AI decisions
-    
-    ## Support
-    
-    For technical issues or questions, please refer to the project documentation or contact the development team.
-    """)
-
-# Footer
-st.markdown("---")
-st.caption("Zycus AI Project - Technical Account Manager Support Assistant | Built with Streamlit")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('**⚙️ Technology**')
+    st.write('• **LLM**: Groq Llama 3.1 8B')
+    st.write('• **RAG**: sentence-transformers')
+    st.write('• **Backend**: FastAPI + Pydantic')
+    st.write('• **Frontend**: Streamlit')
+    st.markdown('</div>', unsafe_allow_html=True)
