@@ -76,6 +76,49 @@ class LLMClient:
             logger.error(f"LLM call failed: {e}")
             raise
 
+    def call_llm_streaming(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        max_tokens: int = 1024,
+        prompt_version: str = "v1.0",
+    ):
+        """Call LLM with streaming output for real-time response generation.
+        
+        Args:
+            system_prompt: System prompt for the LLM
+            user_prompt: User prompt for the LLM
+            max_tokens: Maximum tokens in response
+            prompt_version: Version identifier for the prompt (for logging)
+            
+        Yields:
+            Chunks of the response as they are generated
+            
+        Raises:
+            ValueError: If LLM call fails
+        """
+        try:
+            logger.info(f"LLM streaming call with prompt_version: {prompt_version}")
+            
+            stream = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=self.temperature,
+                max_tokens=max_tokens,
+                stream=True,
+            )
+            
+            for chunk in stream:
+                if chunk.choices[0].delta.content is not None:
+                    yield chunk.choices[0].delta.content
+                    
+        except Exception as e:
+            logger.error(f"LLM streaming call failed: {e}")
+            raise
+
 
 _llm_client: Optional[LLMClient] = None
 

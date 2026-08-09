@@ -6,3 +6,4 @@ groq>=0.4.0
 python-dotenv>=1.0.0
 sentence-transformers>=2.2.0
 onnxruntime>=1.16.0
+streamlit>=1.28.0

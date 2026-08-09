@@ -1,0 +1,100 @@
+name: Run Evaluation Harness
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Set up environment variables
+      run: |
+        echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> $GITHUB_ENV
+        echo "TRIAGE_KB_DIR=knowledge-base" >> $GITHUB_ENV
+    
+    - name: Run evaluation harness
+      run: |
+        python -m task3.run
+    
+    - name: Upload evaluation results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: eval-results
+        path: output/evals/
+        retention-days: 30
+    
+    - name: Check evaluation results
+      run: |
+        python -c "
+        import json
+        with open('output/evals/eval_report.json', 'r') as f:
+            report = json.load(f)
+        
+        avg_score = report['summary']['average_score']
+        passed_cases = report['summary']['passed_cases']
+        total_cases = report['summary']['total_cases']
+        
+        print(f'Average Score: {avg_score}')
+        print(f'Passed Cases: {passed_cases}/{total_cases}')
+        
+        # Fail if average score is below 0.5
+        if avg_score < 0.5:
+            print('❌ Evaluation failed: Average score below 0.5')
+            exit(1)
+        else:
+            print('✅ Evaluation passed')
+        "
+    
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('output/evals/eval_report.json', 'utf8'));
+          
+          const avgScore = report.summary.average_score;
+          const passedCases = report.summary.passed_cases;
+          const totalCases = report.summary.total_cases;
+          
+          const comment = `## 🤖 Evaluation Results
+          
+          **Average Score:** ${avgScore}
+          **Passed Cases:** ${passedCases}/${totalCases}
+          
+          ${avgScore >= 0.7 ? '✅ Evaluation passed successfully!' : '⚠️ Evaluation needs attention'}
+          
+          Full results available in the workflow artifacts.`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
