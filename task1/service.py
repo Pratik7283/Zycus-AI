@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_KB_DIR = Path("knowledge-base")
 
+# prompt_version: v1.0
+# changelog: initial version
 CLASSIFICATION_SYSTEM_PROMPT = """You are a support ticket triage agent. Given a support ticket, 
 classify it into:
 - product_area: one of [Reporting, Authentication, Data Ingestion, 
@@ -27,6 +29,8 @@ classify it into:
 
 Respond ONLY in valid JSON. No extra text."""
 
+# prompt_version: v1.0
+# changelog: initial version
 DRAFT_RESPONSE_SYSTEM_PROMPT = """You are a support agent. Write a professional first response 
 to this ticket. Keep it under 100 words. Be empathetic and clear.
 Reference this KB article if relevant: {kb_excerpt}"""

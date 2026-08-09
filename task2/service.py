@@ -20,6 +20,8 @@ DATA_DIR = Path("data")
 ACCOUNTS_PATH = DATA_DIR / "accounts.json"
 TICKETS_PATH = DATA_DIR / "tickets.json"
 
+# prompt_version: v1.0
+# changelog: initial version
 RISK_DETECTION_SYSTEM_PROMPT = """Given these tickets from the last 90 days, identify any churn 
 or escalation signals. For each flagged ticket provide:
 - ticket_id
@@ -27,11 +29,15 @@ or escalation signals. For each flagged ticket provide:
 - direct_quote from the ticket
 Return as JSON array."""
 
+# prompt_version: v1.0
+# changelog: initial version
 OPEN_RISKS_SYSTEM_PROMPT = """Given this account data and these flagged tickets, write 
 3-5 bullet points of open risks for the TAM.
 Account: {account_json}
 Flagged tickets: {step1_output}"""
 
+# prompt_version: v1.0
+# changelog: initial version
 TALKING_POINTS_SYSTEM_PROMPT = """Given these risks and account context, suggest exactly 3-5 
 talking points for the TAM's QBR meeting.
 Be specific and actionable.
@@ -39,6 +45,8 @@ Keep each point to 1-2 lines maximum.
 You MUST provide exactly 3, 4, or 5 talking points - no more, no less.
 Format as a JSON array of strings."""
 
+# prompt_version: v1.0
+# changelog: initial version
 EXECUTIVE_SUMMARY_SYSTEM_PROMPT = """Combine everything into exactly 3-5 sentences executive summary 
 a senior manager could read in 30 seconds.
 Risks: {step2_output}
